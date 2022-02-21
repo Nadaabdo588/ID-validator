@@ -11,6 +11,7 @@ function validateDateAllNumbers(id) {
     }
     return true;
 }
+
 // check that the ID contains valid date of birth
 function validateDate(id) {
     var century = parseInt(id.charAt(0));
@@ -33,7 +34,8 @@ function validateDate(id) {
     }
     return {"year":date.getFullYear(),"month":date.getMonth()+1, "day":date.getDate()};
 }
-// check that the ID contains valid governorate code
+
+// check that the ID contains valid governorate code and extract it
 function validateGovernorate(id) {
     var code = id.substring(7, 9);
     if (gov_code[code]) {
@@ -53,22 +55,30 @@ router.get("/:id", (req, res) => {
     //extract the ID from the request url
     const id = req.params.id;
     if (!validateDateAllNumbers(id)) {
-        return res.status(400).json({ msg: "The ID must not contain characters" })
+        return res.status(400).json({ msg: "The ID must not contain characters" });
     }
     if (id.length != 14) {
-        return res.status(400).json({ msg: "The ID is not 14 digits in length" })
+        return res.status(400).json({ msg: "The ID is not 14 digits in length" });
+    }
+    if (id.charAt(13) =='0') {
+        return res.status(400).json({ msg: "The ID has invalid check digit" });
     }
     //extract the date of birth
     const dob = validateDate(id);
     if (!dob) {
-        return res.status(400).json({ msg: "The ID contains invalid date of birth" })
+        return res.status(400).json({ msg: "The ID contains invalid date of birth" });
     }
     //get the governorate that corresponds to the entered code
     const gov = validateGovernorate(id);
     if (!gov) {
         return res.status(400).json({ msg: "The ID contains invalid governorate code" })
     }
-    const data = { "date of birth": dob, "governorate": gov };
+    var gender= 'male'
+    if(parseInt(id.charAt(12))%2==0)
+    {
+        gender= 'female'
+    }
+    const data = { "date of birth": dob, "governorate": gov, "gender":gender };
     return res.status(200).json(data)
 
 })
