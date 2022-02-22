@@ -15,6 +15,9 @@ function validateDateAllNumbers(id) {
 // check that the ID contains valid date of birth
 function validateDate(id) {
     var century = parseInt(id.charAt(0));
+    if(century<2){
+        return null;
+    }
     century += 17;
     //cut the string from index 1 to 2 iclusive, to get the year
     var year = id.substring(1, 3);
