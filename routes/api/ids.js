@@ -61,7 +61,7 @@ router.get("/:id", (req, res) => {
         return res.status(400).json({ msg: "The ID is not 14 digits in length" });
     }
     if (id.charAt(13) =='0') {
-        return res.status(400).json({ msg: "The ID has invalid check digit" });
+        return res.status(400).json({ msg: "The ID is invalid" });
     }
     //extract the date of birth
     const dob = validateDate(id);
